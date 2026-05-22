@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Média Ensino Secundário 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f14; --surface:#13161e; --surface2:#1a1e28; --border:#252a38;
+  --accent:#4ade80; --accent2:#38bdf8; --accent3:#f59e0b;
+  --text:#e8eaf0; --muted:#6b7280; --danger:#f87171; --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+
+header{
+  background:linear-gradient(135deg,#0f2027 0%,#1a1e28 50%,#0d1117 100%);
+  border-bottom:1px solid var(--border);padding:28px 40px;
+  display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;
+}
+header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;
+  background:radial-gradient(circle,rgba(74,222,128,.12) 0%,transparent 70%);border-radius:50%;}
+.header-badge{background:var(--accent);color:#0d0f14;font-family:'Syne',sans-serif;font-weight:800;
+  font-size:11px;letter-spacing:2px;padding:4px 10px;border-radius:4px;text-transform:uppercase;}
+header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;}
+header h1 span{color:var(--accent);}
+
+.main-wrap{max-width:1480px;margin:0 auto;padding:32px 24px 60px;
+  display:grid;grid-template-columns:1fr 300px;gap:0 24px;align-items:start;}
+.main-left{min-width:0;}
+.main-right{position:sticky;top:24px;}
+
+.notice{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+  border-left:3px solid var(--accent3);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:28px;font-size:13px;color:#fcd34d;line-height:1.6;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.card-header{background:var(--surface2);border-bottom:1px solid var(--border);
+  padding:14px 20px;display:flex;align-items:center;gap:10px;}
+.card-header .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+.card-header h2{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;}
+.card-header .tag{margin-left:auto;font-size:10px;font-family:'DM Mono',monospace;
+  color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:4px;border:1px solid var(--border);}
+
+.discipline-table{width:100%;border-collapse:collapse;}
+.discipline-table thead th{background:rgba(255,255,255,.02);padding:9px 10px;text-align:center;
+  font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;color:var(--muted);
+  text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+.discipline-table thead th:first-child{text-align:left;}
+.discipline-table tbody tr{border-bottom:1px solid rgba(37,42,56,.6);transition:background .15s;}
+.discipline-table tbody tr:hover{background:rgba(255,255,255,.02);}
+.discipline-table tbody td{padding:9px 10px;vertical-align:middle;}
+.disc-name{font-weight:500;font-size:13px;display:flex;align-items:center;gap:8px;}
+.disc-icon{width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;}
+
+input[type="number"]{width:58px;background:var(--bg);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 7px;
+  border-radius:6px;text-align:center;transition:border-color .2s,box-shadow .2s;
+  -moz-appearance:textfield;}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;}
+input[type="number"]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(74,222,128,.15);}
+input[type="number"].wide{width:74px;}
+input[type="number"].invalid{border-color:var(--danger)!important;box-shadow:0 0 0 2px rgba(248,113,113,.15);}
+input[type="number"]:disabled{opacity:.25;cursor:not-allowed;}
+
+select{background:var(--bg);border:1px solid var(--border);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 7px;border-radius:6px;
+  cursor:pointer;transition:border-color .2s;max-width:155px;}
+select:focus{outline:none;border-color:var(--accent2);}
+
+.center-cell{text-align:center;}
+.dis-cell{opacity:.18;pointer-events:none;text-align:center;}
+
+.check-group{display:flex;flex-direction:column;gap:4px;align-items:center;}
+label.chk{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);
+  cursor:pointer;white-space:nowrap;}
+label.chk input{accent-color:var(--accent);cursor:pointer;width:13px;height:13px;}
+
+.cfd-value{font-family:'DM Mono',monospace;font-size:15px;font-weight:600;
+  padding:4px 10px;border-radius:6px;text-align:center;min-width:44px;display:inline-block;
+  background:rgba(56,189,248,.1);color:var(--accent2);border:1px solid rgba(56,189,248,.2);}
+.media-value{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;
+  padding:4px 10px;border-radius:6px;text-align:center;min-width:44px;display:inline-block;
+  background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2);}
+.dash{color:var(--muted);font-size:18px;}
+
+.pill{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;letter-spacing:.5px;
+  padding:2px 6px;border-radius:4px;text-transform:uppercase;vertical-align:middle;margin-left:4px;}
+.pill-tri{background:rgba(167,139,250,.15);color:#a78bfa;}
+.pill-bi{background:rgba(56,189,248,.15);color:var(--accent2);}
+.pill-an{background:rgba(251,191,36,.15);color:#fbbf24;}
+.pill-ex{background:rgba(251,146,60,.15);color:#fb923c;}
+
+/* RESULT PANEL */
+.result-panel{background:linear-gradient(135deg,var(--surface2),#0f1820);
+  border:1px solid var(--border);border-radius:14px;padding:22px 20px;margin-bottom:16px;
+  display:flex;flex-direction:column;gap:24px;}
+.result-block{text-align:center;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.result-block:last-child{padding-bottom:0;border-bottom:none;}
+.result-label{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.result-value{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;line-height:1;}
+.result-value.green{color:var(--accent);}
+.result-value.amber{color:var(--accent3);}
+.result-sub{font-size:11px;color:var(--muted);margin-top:6px;}
+
+.weight-selector{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
+.weight-btn{background:var(--bg);border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:12px;padding:5px 13px;border-radius:6px;
+  cursor:pointer;transition:all .2s;}
+.weight-btn.active{background:rgba(74,222,128,.12);border-color:var(--accent);color:var(--accent);}
+
+.ingresso-item{display:flex;justify-content:space-between;gap:12px;
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:3px 0;
+  border-bottom:1px solid rgba(37,42,56,.5);}
+.ingresso-item:last-child{border-bottom:none;}
+.ingresso-item strong{color:var(--accent2);}
+
+.formula-box{background:rgba(13,15,20,.8);border:1px solid var(--border);border-radius:8px;
+  padding:11px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);
+  margin-top:12px;text-align:left;line-height:1.7;}
+.formula-box strong{color:var(--accent2);}
+
+details{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+summary{padding:14px 18px;cursor:pointer;font-weight:500;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;background:var(--surface);}
+summary::-webkit-details-marker{display:none;}
+summary::after{content:'+';font-size:18px;color:var(--accent);font-family:'Syne',sans-serif;}
+details[open] summary::after{content:'−';}
+.faq-body{padding:16px 18px;background:var(--surface2);font-size:13px;line-height:1.7;color:#a0aec0;}
+.faq-body code{font-family:'DM Mono',monospace;background:var(--bg);padding:2px 6px;
+  border-radius:4px;color:var(--accent2);font-size:12px;}
+
+.error-badge{display:none;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);
+  color:var(--danger);font-size:12px;padding:8px 14px;border-radius:8px;margin-top:10px;}
+
+@media(max-width:960px){
+  .main-wrap{grid-template-columns:1fr;}
+  .main-right{position:static;}
+  .result-panel{grid-template-columns:1fr;}
+  header{padding:18px 20px;}
+  header h1{font-size:16px;}
+  .discipline-table thead th{font-size:9px;padding:7px 5px;}
+  .discipline-table tbody td{padding:7px 5px;}
+  input[type="number"]{width:48px;}
+  input[type="number"].wide{width:62px;}
+  select{max-width:110px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Calculadora de Média<br><span>Ensino Secundário</span></h1>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px;">Cursos Científico-Humanísticos · Acesso ao Ensino Superior</div>
+  </div>
+  <div style="margin-left:auto;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-align:right;">desenvolvido por<br><span style="color:var(--accent);font-weight:500;">Hugo Simões</span></div>
+</header>
+
+<div class="main-wrap">
+<div class="main-left">
+<div class="notice">
+  <div style="text-align:center;font-size:15px;margin-bottom:8px;">⚠️ <strong>Atenção</strong></div>
+  <p style="text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto;margin:0;">Este simulador destina-se a alunos que irão concluir o Ensino Secundário, pelos cursos Científico-Humanísticos. É meramente informativo e ilustrativo, podendo conter falhas, pelo que não substitui a consulta do <a href="https://www.dges.gov.pt/guias/pdfs/GuiaGeralExames2026.pdf" target="_blank" style="color:#fcd34d">Guia Geral de Exames 2026</a>.</p>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DISCIPLINAS OBRIGATÓRIAS
+══════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="dot"></div>
+    <h2>Disciplinas Obrigatórias</h2>
+    <div class="tag">Trienais &amp; Bienais</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="discipline-table">
+    <thead>
+      <tr>
+        <th style="width:190px;text-align:left;">Disciplina</th>
+        <th>10.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>11.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>12.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th style="color:#a78bfa">Média<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>Exame 2026<br><span style="color:#4b5563">(0–200)</span></th>
+        <th style="width:52px;white-space:normal;">Exame conta CFD?</th>
+        <th>Ingresso?</th>
+        <th>Melhoria?</th>
+        <th>Exame Anterior<br><span style="color:#4b5563">(0–200)</span></th>
+        <th>CFD</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- PORTUGUÊS trienal, tem exame -->
+      <tr data-row="pt" data-type="trienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon"></span>Português<span class="pill pill-tri">Trienal</span></td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g12" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+      <!-- FILOSOFIA bienal, com exame opcional -->
+      <tr data-row="fil" data-type="bienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#f59e0b"></span>Filosofia<span class="pill pill-bi">Bienal</span></td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+      <!-- LÍNGUA ESTRANGEIRA bienal, tem exame -->
+      <tr data-row="le" data-type="bienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#34d399"></span>
+          <select class="sel-disc">
+            <option value="Língua Estrangeira">Língua Estrangeira</option>
+            <option>Inglês</option><option>Francês</option><option>Alemão</option><option>Espanhol</option>
+          </select>
+        </td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+      <!-- ED. FÍSICA trienal, sem exame -->
+      <tr data-row="ef" data-type="trienal" data-has-exam="0">
+        <td class="disc-name"><span class="disc-icon" style="background:#f472b6"></span>Educação Física<span class="pill pill-tri">Trienal</span></td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g12" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="dis-cell">—</td>
+        <td class="dis-cell">—</td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TRIENAL DE OPÇÃO
+══════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="dot" style="background:#a78bfa"></div>
+    <h2>Disciplina Trienal de Opção</h2>
+    <div class="tag">Trienal · com Exame</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="discipline-table">
+    <thead>
+      <tr>
+        <th style="width:190px;text-align:left;">Disciplina</th>
+        <th>10.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>11.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>12.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th style="color:#a78bfa">Média<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>Exame 2026<br><span style="color:#4b5563">(0–200)</span></th>
+        <th style="width:52px;white-space:normal;">Exame conta CFD?</th>
+        <th>Ingresso?</th>
+        <th>Melhoria?</th>
+        <th>Exame Anterior<br><span style="color:#4b5563">(0–200)</span></th>
+        <th>CFD</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-row="tri" data-type="trienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#a78bfa"></span>
+          <select class="sel-disc">
+            <option value="">Escolher...</option>
+            <option>Matemática A</option><option>História A</option><option>Desenho A</option>
+          </select>
+        </td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g12" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BIENAIS DE OPÇÃO
+══════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="dot" style="background:#38bdf8"></div>
+    <h2>Disciplinas Bienais de Opção</h2>
+    <div class="tag">Bienal</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="discipline-table">
+    <thead>
+      <tr>
+        <th style="width:190px;text-align:left;">Disciplina</th>
+        <th>10.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>11.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th style="color:#4b5563">—</th>
+        <th style="color:#a78bfa">Média<br><span style="color:#4b5563">(0–20)</span></th>
+        <th>Exame 2026<br><span style="color:#4b5563">(0–200)</span></th>
+        <th style="width:52px;white-space:normal;">Exame conta CFD?</th>
+        <th>Ingresso?</th>
+        <th>Melhoria?</th>
+        <th>Exame Anterior<br><span style="color:#4b5563">(0–200)</span></th>
+        <th>CFD</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr data-row="bi1" data-type="bienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#38bdf8"></span>
+          <select class="sel-disc">
+            <option value="">Bienal 1...</option>
+            <option>Física e Química A</option><option>Biologia e Geologia</option>
+            <option>Economia A</option><option>Geometria Descritiva</option>
+            <option>Geografia A</option><option>Matemática Aplicada às Ciências Sociais</option>
+            <option>Matemática B</option><option>História B</option>
+            <option>Literatura Portuguesa</option><option>Latim A</option>
+            <option>Inglês</option><option>Francês</option><option>Alemão</option><option>Espanhol</option>
+          </select>
+        </td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+      <tr data-row="bi2" data-type="bienal" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#38bdf8"></span>
+          <select class="sel-disc">
+            <option value="">Bienal 2...</option>
+            <option>Física e Química A</option><option>Biologia e Geologia</option>
+            <option>Economia A</option><option>Geometria Descritiva</option>
+            <option>Geografia A</option><option>Matemática Aplicada às Ciências Sociais</option>
+            <option>Matemática B</option><option>História B</option>
+            <option>Literatura Portuguesa</option><option>Latim A</option>
+            <option>Inglês</option><option>Francês</option><option>Alemão</option><option>Espanhol</option>
+          </select>
+        </td>
+        <td class="center-cell"><input type="number" class="g10" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><input type="number" class="g11" min="0" max="20" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ANUAIS (12.º)
+══════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="dot" style="background:#fbbf24"></div>
+    <h2>Disciplinas Anuais — 12.º ano</h2>
+    <div class="tag">Anual</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="discipline-table">
+    <thead>
+      <tr>
+        <th style="width:190px;text-align:left;">Disciplina</th>
+        <th style="color:#4b5563">—</th>
+        <th style="color:#4b5563">—</th>
+        <th>12.º<br><span style="color:#4b5563">(0–20)</span></th>
+        <th style="color:#a78bfa">Média<br><span style="color:#4b5563">(0–20)</span></th>
+        <th style="width:52px;white-space:normal;">Exame conta CFD?</th>
+        <th style="color:#4b5563">—</th>
+        <th style="color:#4b5563">—</th>
+        <th style="color:#4b5563">—</th>
+        <th>CFD</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr data-row="an1" data-type="anual" data-has-exam="0">
+        <td class="disc-name"><span class="disc-icon" style="background:#fbbf24"></span>
+          <input type="text" class="sel-disc" placeholder="Nome da disciplina"
+            style="background:var(--bg);border:1px solid var(--border);color:var(--text);
+            padding:5px 8px;border-radius:6px;font-size:12px;width:140px;">
+        </td>
+        <td class="dis-cell">—</td><td class="dis-cell">—</td>
+        <td class="center-cell"><input type="number" class="g12" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="dis-cell">—</td><td class="dis-cell">—</td><td class="dis-cell">—</td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+      <tr data-row="an2" data-type="anual" data-has-exam="0">
+        <td class="disc-name"><span class="disc-icon" style="background:#fbbf24"></span>
+          <input type="text" class="sel-disc" placeholder="Nome da disciplina"
+            style="background:var(--bg);border:1px solid var(--border);color:var(--text);
+            padding:5px 8px;border-radius:6px;font-size:12px;width:140px;">
+        </td>
+        <td class="dis-cell">—</td><td class="dis-cell">—</td>
+        <td class="center-cell"><input type="number" class="g12" min="0" max="20" placeholder="—"></td>
+        <td class="center-cell"><span class="media-value">—</span></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-cfc" checked> Sim</label></td>
+        <td class="dis-cell">—</td><td class="dis-cell">—</td><td class="dis-cell">—</td>
+        <td class="center-cell"><span class="cfd-value">—</span></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     EXAMES EXTRA
+══════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="dot" style="background:#fb923c"></div>
+    <h2>Exames Extra — Provas de Ingresso Adicionais</h2>
+    <div class="tag">Opcional · Não conta para CFC</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="discipline-table">
+    <thead>
+      <tr>
+        <th style="width:190px;text-align:left;">Exame</th>
+        <th style="color:#4b5563" colspan="3">Não conta para CFC</th>
+        <th>Exame 2026<br><span style="color:#4b5563">(0–200)</span></th>
+        <th style="color:#4b5563">—</th>
+        <th>Ingresso?</th>
+        <th>Melhoria?</th>
+        <th>Exame Anterior<br><span style="color:#4b5563">(0–200)</span></th>
+        <th style="color:#4b5563">—</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr data-row="ex1" data-type="extra" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#fb923c"></span>
+          <select class="sel-disc">
+            <option value="">Exame Extra 1...</option>
+            <option>Alemão</option><option>Física e Química A</option><option>Biologia e Geologia</option>
+            <option>Desenho A</option><option>Inglês</option><option>Espanhol</option>
+            <option>Economia A</option><option>Francês</option><option>Geometria Descritiva</option>
+            <option>Geografia A</option><option>Latim A</option><option>Literatura Portuguesa</option>
+            <option>Matemática Aplicada às Ciências Sociais</option>
+            <option>Matemática A</option><option>Matemática B</option>
+            <option>História A</option><option>História B</option>
+          </select>
+        </td>
+        <td class="dis-cell" colspan="3">—</td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="dis-cell">—</td>
+      </tr>
+
+      <tr data-row="ex2" data-type="extra" data-has-exam="1">
+        <td class="disc-name"><span class="disc-icon" style="background:#fb923c"></span>
+          <select class="sel-disc">
+            <option value="">Exame Extra 2...</option>
+            <option>Alemão</option><option>Física e Química A</option><option>Biologia e Geologia</option>
+            <option>Desenho A</option><option>Inglês</option><option>Espanhol</option>
+            <option>Economia A</option><option>Francês</option><option>Geometria Descritiva</option>
+            <option>Geografia A</option><option>Latim A</option><option>Literatura Portuguesa</option>
+            <option>Matemática Aplicada às Ciências Sociais</option>
+            <option>Matemática A</option><option>Matemática B</option>
+            <option>História A</option><option>História B</option>
+          </select>
+        </td>
+        <td class="dis-cell" colspan="3">—</td>
+        <td class="center-cell"><input type="number" class="exam wide" min="0" max="200" placeholder="—"></td>
+        <td class="dis-cell">—</td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-ing"> Sim</label></td>
+        <td class="center-cell"><label class="chk"><input type="checkbox" class="cb-mel"> Sim</label></td>
+        <td class="center-cell"><input type="number" class="exam-prev wide" min="0" max="200" placeholder="—" disabled></td>
+        <td class="dis-cell">—</td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+</div>
+
+</div><!-- /main-left -->
+
+<div class="main-right">
+<!-- ══════════════════════════════════════════
+     PAINEL DE RESULTADOS
+══════════════════════════════════════════ -->
+<div class="result-panel">
+
+  <!-- CFC -->
+  <div class="result-block">
+    <div class="result-label">Classificação Final do Curso (CFC)</div>
+    <div class="result-value green" id="res-cfc">—</div>
+    <div id="res-cfc-decimais" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);margin-top:5px;min-height:18px;"></div>
+    <div class="result-sub">Escala 0–20 · às unidades</div>
+    <div class="formula-box" style="margin-top:14px;text-align:left;">
+      <strong>Fórmula:</strong><br>
+      CFC = (3×∑trienais + 2×∑bienais + 1×∑anuais)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;÷ (3×n_tri + 2×n_bi + 1×n_an)
+    </div>
+    <div id="err-badge" class="error-badge">⚠ Verifica as notas assinaladas a vermelho.</div>
+  </div>
+
+  <!-- ACESSO -->
+  <div class="result-block">
+    <div class="result-label">Nota de Acesso ao Ensino Superior</div>
+    <div class="weight-selector">
+      <button class="weight-btn" data-w="40">40%</button>
+      <button class="weight-btn active" data-w="50">50%</button>
+      <button class="weight-btn" data-w="55">55%</button>
+      <button class="weight-btn" data-w="60">60%</button>
+    </div>
+    <div class="result-sub" style="margin-bottom:8px">Peso das provas de ingresso</div>
+    <div class="result-value amber" id="res-acesso">—</div>
+    <div class="result-sub">Escala 0–200</div>
+    <div class="formula-box" style="margin-top:14px;text-align:left;">
+      <strong>Fórmula:</strong><br>
+      Acesso = (1−p)×CFC×10 + p×Média(Ingresso)<br>
+      <span style="opacity:.6">onde p = peso das provas (ex: 0,50)</span>
+    </div>
+  </div>
+
+  <!-- PROVAS DE INGRESSO -->
+  <div class="result-block">
+    <div class="result-label">Provas de Ingresso Selecionadas</div>
+    <div id="ingresso-list" style="text-align:left;margin-top:6px;">
+      <div style="color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;">
+        Nenhuma prova selecionada.
+      </div>
+    </div>
+    <div style="margin-top:14px;text-align:left;">
+      <div style="font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">
+        Média das provas de ingresso
+      </div>
+      <div class="result-value" id="res-ing-avg" style="font-size:32px;color:var(--accent2);">—</div>
+      <div class="result-sub">Escala 0–200</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     FAQ
+══════════════════════════════════════════ -->
+<div style="margin-top:36px;">
+  <div style="display:flex;align-items:center;gap:10px;padding:0 0 16px 0;">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--muted)"></div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">Perguntas Frequentes</h2>
+  </div>
+
+  <details>
+    <summary>Como se calcula a CFD (Classificação Final da Disciplina)?</summary>
+    <div class="faq-body">
+      <strong>Disciplinas com exame nacional — alunos internos 12.º:</strong><br>
+      CIF = média aritmética das notas internas (10.º, 11.º e/ou 12.º), arredondada às unidades.<br>
+      CE = nota do exame (0–200) ÷ 10, arredondada às unidades.<br>
+      <code>CFD = (7,5 × CIF + 2,5 × CE) / 10</code><br><br>
+      <strong>Disciplinas bienais/trienais sem exame:</strong><br>
+      <code>CFD = média das notas internas dos anos cursados</code>, arredondada às unidades.<br><br>
+      <strong>Disciplinas anuais:</strong><br>
+      <code>CFD = nota do 12.º ano</code><br><br>
+      <strong>Melhoria de exame:</strong> é usada automaticamente a classificação mais alta (2026 vs. exame anterior).
+    </div>
+  </details>
+
+  <details>
+    <summary>Como se calcula o CFC (Classificação Final do Curso)?</summary>
+    <div class="faq-body">
+      <code>CFC = (3×∑CFD trienais + 2×∑CFD bienais + 1×∑CFD anuais) ÷ (3×n_tri + 2×n_bi + n_an)</code><br><br>
+      Calculado até às décimas, sem arredondamento. Apenas as disciplinas com "Exame conta CFD?" marcado entram neste cálculo. Os exames extra <strong>não</strong> contam para o CFC.
+    </div>
+  </details>
+
+  <details>
+    <summary>Como se calcula a nota de candidatura ao Ensino Superior?</summary>
+    <div class="faq-body">
+      <code>Nota Acesso = (1 − p) × CFC × 10 + p × Média(Provas de Ingresso)</code><br><br>
+      Onde <strong>p</strong> é o peso das provas de ingresso definido por cada instituição (40%, 50%, 55% ou 60%).<br>
+      O CFC × 10 converte a escala 0–20 para 0–200.<br>
+      As provas de ingresso são usadas na escala 0–200, sem arredondamento.
+    </div>
+  </details>
+
+  <details>
+    <summary>Porque devo inserir o exame de 0 a 200 e não de 0 a 20?</summary>
+    <div class="faq-body">
+      Para acesso ao ensino superior, as classificações dos exames são usadas <strong>sem arredondamento</strong>. Por exemplo, 124 pontos no exame:<br>
+      • Para o CFD: conta como 12 valores (124 ÷ 10, arredondado).<br>
+      • Para prova de ingresso: conta como 124 pontos (sem arredondamento).<br>
+      A calculadora faz todas as conversões automaticamente.
+    </div>
+  </details>
+</div>
+
+</div><!-- /main-right -->
+
+</div><!-- /main-wrap -->
+
+<script>
+// ============================================================
+//  LÓGICA DE CÁLCULO
+// ============================================================
+
+let examWeight = 0.50;
+let hasErrors  = false;
+
+// ── helpers ──────────────────────────────────────────────────
+const num  = el => { const v = parseFloat(el?.value); return isNaN(v) ? null : v; };
+const r0   = v  => Math.round(v);                 // arredonda às unidades
+const r1   = v  => Math.round(v * 10) / 10;       // arredonda às décimas
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+
+// ── CFD de uma linha ─────────────────────────────────────────
+function calcCFD(row) {
+  const type   = row.dataset.type;
+
+  // O exame só conta para o CFD se o checkbox "Exame conta CFD?" estiver marcado
+  const cbCfc  = row.querySelector('.cb-cfc');
+  const examContaCFD = cbCfc ? cbCfc.checked : false;
+
+  const g10 = num(row.querySelector('.g10'));
+  const g11 = num(row.querySelector('.g11'));
+  const g12 = num(row.querySelector('.g12'));
+
+  const ex200  = num(row.querySelector('.exam'));
+
+  // CE na escala 0-20 (arredondado às unidades para a fórmula do CFD)
+  const CE = (examContaCFD && ex200 !== null) ? r0(ex200 / 10) : null;
+
+  if (type === 'extra') return null;
+
+  if (type === 'anual') {
+    return g12;   // CFD = CIF do 12.º
+  }
+
+  if (type === 'trienal') {
+    const internals = [g10, g11, g12].filter(v => v !== null);
+    if (internals.length === 0) return null;
+    const CIF = r0(internals.reduce((a,b)=>a+b,0) / internals.length);
+    if (CE === null) return CIF;
+    return r0((7.5 * CIF + 2.5 * CE) / 10);
+  }
+
+  if (type === 'bienal') {
+    const internals = [g10, g11].filter(v => v !== null);
+    if (internals.length === 0) return null;
+    const CIF = r0(internals.reduce((a,b)=>a+b,0) / internals.length);
+    if (CE === null) return CIF;
+    return r0((7.5 * CIF + 2.5 * CE) / 10);
+  }
+
+  return null;
+}
+
+// ── CFC ──────────────────────────────────────────────────────
+function calcCFC(allRows) {
+  let num_=0, den=0;
+  allRows.forEach(row => {
+    if (row.dataset.type === 'extra') return;
+    const cfd = calcCFD(row);
+    if (cfd === null) return;
+    let w = 1;
+    if (row.dataset.type === 'trienal') w = 3;
+    if (row.dataset.type === 'bienal')  w = 2;
+    num_ += w * cfd;
+    den  += w;
+  });
+  if (den === 0) return null;
+  return r1(num_ / den);
+}
+
+// ── Provas de ingresso ────────────────────────────────────────
+function getIngresso(allRows) {
+  const list = [];
+  allRows.forEach(row => {
+    const cbIng = row.querySelector('.cb-ing');
+    if (!cbIng || !cbIng.checked) return;
+    const ex200  = num(row.querySelector('.exam'));
+    const exP200 = num(row.querySelector('.exam-prev'));
+    let best = null;
+    if (ex200 !== null && exP200 !== null) best = Math.max(ex200, exP200);
+    else if (ex200 !== null)  best = ex200;
+    else if (exP200 !== null) best = exP200;
+    if (best === null) return;
+
+    // nome da disciplina
+    const sel = row.querySelector('.sel-disc');
+    let name = sel?.value || row.dataset.row || '';
+    if (!name || name === '') name = '(sem nome)';
+    list.push({ name, val: best });
+  });
+  return list;
+}
+
+// ── Validação ─────────────────────────────────────────────────
+function validate(allRows) {
+  hasErrors = false;
+  allRows.forEach(row => {
+    row.querySelectorAll('.g10,.g11,.g12').forEach(inp => {
+      const v = num(inp);
+      const bad = v !== null && (v < 0 || v > 20);
+      inp.classList.toggle('invalid', bad);
+      if (bad) hasErrors = true;
+    });
+    row.querySelectorAll('.exam,.exam-prev').forEach(inp => {
+      const v = num(inp);
+      const bad = v !== null && (v < 0 || v > 200);
+      inp.classList.toggle('invalid', bad);
+      if (bad) hasErrors = true;
+    });
+  });
+}
+
+// ── UPDATE PRINCIPAL ─────────────────────────────────────────
+function update() {
+  const allRows = [...document.querySelectorAll('tr[data-row]')];
+
+  validate(allRows);
+  document.getElementById('err-badge').style.display = hasErrors ? 'block' : 'none';
+
+  // CFDs individuais + Média interna
+  allRows.forEach(row => {
+    const cfdEl = row.querySelector('.cfd-value');
+    const medEl = row.querySelector('.media-value');
+
+    // Média interna (notas dos anos, sem exame)
+    if (medEl) {
+      const type = row.dataset.type;
+      const g10 = num(row.querySelector('.g10'));
+      const g11 = num(row.querySelector('.g11'));
+      const g12 = num(row.querySelector('.g12'));
+      let internals = [];
+      if (type === 'trienal') internals = [g10, g11, g12].filter(v => v !== null);
+      else if (type === 'bienal') internals = [g10, g11].filter(v => v !== null);
+      else if (type === 'anual') internals = [g12].filter(v => v !== null);
+      if (internals.length > 0) {
+        const avg = internals.reduce((a,b)=>a+b,0) / internals.length;
+        medEl.textContent = avg.toFixed(1);
+      } else {
+        medEl.textContent = '—';
+      }
+    }
+
+    if (!cfdEl) return;
+    const cfd = calcCFD(row);
+    cfdEl.textContent = cfd !== null ? cfd.toFixed(0) : '—';
+  });
+
+  // CFC
+  const cfc = calcCFC(allRows);
+  const cfcRounded = cfc !== null ? Math.round(cfc) : null;
+  document.getElementById('res-cfc').textContent = cfcRounded !== null ? cfcRounded.toFixed(0) : '—';
+  const decEl = document.getElementById('res-cfc-decimais');
+  if (cfc !== null) {
+    decEl.textContent = '(' + cfc.toFixed(1) + ')';
+  } else {
+    decEl.textContent = '';
+  }
+
+  // Provas de ingresso
+  const ingressoList = getIngresso(allRows);
+  const ingEl = document.getElementById('ingresso-list');
+  const avgEl = document.getElementById('res-ing-avg');
+
+  if (ingressoList.length === 0) {
+    ingEl.innerHTML = '<div style="color:var(--muted);font-size:12px;font-family:\'DM Mono\',monospace;">Nenhuma prova selecionada.</div>';
+    avgEl.textContent = '—';
+  } else {
+    ingEl.innerHTML = ingressoList.map(g =>
+      `<div class="ingresso-item"><span>${g.name}</span><strong>${g.val.toFixed(1)}</strong></div>`
+    ).join('');
+    const avg = ingressoList.reduce((a,b)=>a+b.val,0) / ingressoList.length;
+    avgEl.textContent = avg.toFixed(1);
+  }
+
+  // Nota de acesso
+  const acessoEl = document.getElementById('res-acesso');
+  if (cfc !== null) {
+    const cfcScale200 = cfc * 10;
+    let acesso;
+    if (ingressoList.length > 0) {
+      const avg = ingressoList.reduce((a,b)=>a+b.val,0) / ingressoList.length;
+      acesso = (1 - examWeight) * cfcScale200 + examWeight * avg;
+    } else {
+      acesso = cfcScale200;
+    }
+    acessoEl.textContent = clamp(acesso, 0, 200).toFixed(1);
+  } else {
+    acessoEl.textContent = '—';
+  }
+}
+
+// ── Checkbox "Melhoria" → ativa/desativa campo exame anterior ──
+document.querySelectorAll('.cb-mel').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const row = cb.closest('tr');
+    const prevInp = row.querySelector('.exam-prev');
+    if (!prevInp) return;
+    prevInp.disabled = !cb.checked;
+    prevInp.style.opacity = cb.checked ? '1' : '0.25';
+    if (!cb.checked) prevInp.value = '';
+    update();
+  });
+});
+
+// ── Botões de peso ────────────────────────────────────────────
+document.querySelectorAll('.weight-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.weight-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    examWeight = parseFloat(btn.dataset.w) / 100;
+    update();
+  });
+});
+
+// ── Qualquer input/select/checkbox → recalcular ───────────────
+document.addEventListener('input',  e => { if (e.target.tagName !== 'BUTTON') update(); });
+document.addEventListener('change', e => { update(); });
+
+// ── Arranque ──────────────────────────────────────────────────
+update();
+</script>
+</body>
+</html>
